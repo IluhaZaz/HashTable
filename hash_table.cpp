@@ -13,13 +13,13 @@ class my_pair : public pair<F, S> {
 private:
 	bool _is_initialized;
 public:
-	my_pair() {
-		pair<F, S>();
+	my_pair()
+	: pair<F, S>() {
 		_is_initialized = false;
 	}
 
-	my_pair(F first, S second) {
-		pair<F, S>(first, second);
+	my_pair(F first, S second)
+	: pair<F, S>(first, second) {
 		_is_initialized = false;
 	}
 
@@ -27,7 +27,7 @@ public:
 		_is_initialized = true;
 	}
 
-	bool is_initialized() {
+	bool is_initialized() const {
 		return _is_initialized;
 	}
 };
@@ -37,20 +37,22 @@ class UnorderedMap {
 private:
 	vector<my_pair<Key, Value>> _data;
 	size_t _used;
+	float _coef;
 public:
-	UnorderedMap(): _data(20), _used(0) {}
-	UnorderedMap(size_t size): _data(size), _used(0) {};
+	UnorderedMap(): _data(20), _used(0), _coef(0.7) {}
+	UnorderedMap(size_t size, float coef = 0.7): _data(size), _used(0), _coef(coef) {};
 
-	size_t get_hash(const Key& k) {
+	size_t get_hash(const Key& k, size_t i = 0) {
+		size_t size = _data.size();
 		if constexpr (std::is_same_v<Key, int>) {
-			return k % _data.size();
+			return (k % size + i)%size;
 		}
 		else if constexpr (std::is_same_v<Key, std::string>) {
 			size_t sum = 0;
 			for (auto val : k) {
 				sum += int(val);
 			}
-			return sum % _data.size();
+			return (sum % size + i)%size;
 		}
 	}
 
@@ -65,7 +67,10 @@ public:
 
 	void print() {
 		for (const auto& val: _data) {
-			cout << val.first << " " << val.second << endl;
+			if (val.is_initialized())
+				cout << val.first << " " << val.second << endl;
+			else
+				cout << "X" << " " << "X" << endl;
 		}
 	}
 
@@ -85,8 +90,43 @@ public:
 			return nullptr;
 	}
 
+	void remake() {
+		vector<my_pair<Key, Value>> new_data((int)_data.size()*1.5);
+		for (size_t i = 0; i < _data.size(); i++) {
+			if (_data[i].is_initialized()) {
+				size_t ind = this->get_hash(_data[i].first);
+				size_t j = 0;
+				while (new_data[ind].is_initialized()) {
+					j++;
+					ind = this->get_hash(_data[i].first, j);
+				}
+				new_data[ind] = _data[i];
+			}
+		}
+		_data.clear();
+		_data = new_data;
+	}
+
 	void insert(Key key, Value value) {
-		size_t = this->get_hash(key);
-		
+		size_t ind = this->get_hash(key);
+		int i = 0;
+		while (_data[ind].is_initialized()) {
+			i++;
+			ind = this->get_hash(key, i);
+		}
+		_data[ind] = my_pair<Key, Value>(key, value);
+		_data[ind].set_initialized();
+		_used++;
+		if ((float)_used / _data.size() >= _coef) {
+			this->remake();
+		}
+	}
+
+	bool contains(Value value) {
+		for (const auto& val : _data) {
+			if (val.second == value)
+				return true;
+		}
+		return false;
 	}
 };
