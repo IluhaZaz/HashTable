@@ -19,6 +19,16 @@ TEST(HashTableTests, SearchCheck) {
 	EXPECT_EQ(nullptr, h.search(5));
 }
 
+TEST(HashTableTests, SearchCheck2) {
+	UnorderedMap<int, int> h(15);
+	h.insert(2, 2);
+	h.insert(0, 0);
+	h.insert(4, 4);
+	h.insert(19, 4);
+	h.erase(4);
+	EXPECT_EQ(*h.search(19), 4);
+}
+
 TEST(HashTableTests, MyPairCheck) {
 	my_pair<int, int> p(2, 4);
 	EXPECT_EQ(2, p.first);

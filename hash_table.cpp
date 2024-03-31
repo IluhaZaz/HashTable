@@ -12,15 +12,18 @@ template <typename F, typename S>
 class my_pair : public pair<F, S> {
 private:
 	bool _is_initialized;
+	bool _deleted;
 public:
 	my_pair()
 	: pair<F, S>() {
 		_is_initialized = false;
+		_deleted = false;
 	}
 
 	my_pair(F first, S second)
 	: pair<F, S>(first, second) {
 		_is_initialized = false;
+		_deleted = false;
 	}
 
 	void set_initialized() {
@@ -31,8 +34,13 @@ public:
 		return _is_initialized;
 	}
 
-	void clear() {
+	bool is_deleted() const {
+		return _deleted;
+	}
+
+	void del() {
 		_is_initialized = false;
+		_deleted = true;
 	}
 };
 
@@ -86,16 +94,18 @@ public:
 
 	Value* search(Key key) {
 		size_t hash = this->get_hash(key);
-		if (!_data[hash].is_initialized()) {
-			return nullptr;
-		}
-		for (int i = hash; i < _data.size(); i++) {
-			if (!_data[i].is_initialized()) {
-				return nullptr;
+		size_t i = 0;
+		while (_data[hash].is_initialized() || _data[hash].is_deleted()) {
+			if (_data[hash].is_deleted()) {
+				i++;
+				hash = this->get_hash(key, i);
+				continue;
 			}
-			if (_data[i].first == key) {
-				return &(_data[i].second);
+			if (_data[hash].first == key) {
+				return &_data[hash].second;
 			}
+			i++;
+			hash = this->get_hash(key, i);
 		}
 			return nullptr;
 	}
@@ -134,8 +144,11 @@ public:
 
 	bool contains(Value value) {
 		for (const auto& val : _data) {
-			if (val.second == value)
-				return true;
+			if(val.is_initialized())
+			{
+				if (val.second == value)
+					return true;
+			}
 		}
 		return false;
 	}
@@ -160,7 +173,7 @@ public:
 			i++;
 			ind = this->get_hash(key, i);
 		}
-		_data[ind].clear();
+		_data[ind].del();
 		_used--;
 	}
 
@@ -184,8 +197,12 @@ public:
 		size_t hash = this->get_hash(key);
 		size_t res = 0;
 		for (const auto& val : _data) {
-			if (this->get_hash(val.first) == hash) {
-				res++;
+
+			if (val.is_initialized())
+			{
+				if (this->get_hash(val.first) == hash) {
+					res++;
+				}
 			}
 		}
 		return res;
