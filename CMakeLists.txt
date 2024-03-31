@@ -30,3 +30,6 @@ FetchContent_MakeAvailable(googletest)
 # Объявляем тесты
 add_executable(tests "tests.cpp")
 target_link_libraries(tests hash_table GTest::gtest_main)
+
+add_executable(task "task.cpp")
+target_link_libraries(task hash_table)

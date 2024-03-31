@@ -148,3 +148,14 @@ TEST(HashTableTests, CountCheck) {
 
 	EXPECT_EQ(h.count(31), 3);
 }
+
+TEST(HashTableTests, ItemsCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(4, 11);
+	h.insert(31, 11);
+	h.insert(58, 11);
+	h.insert(2, 1212);
+	auto v = h.items();
+	for (const auto& val : v)
+		cout << val.first << ": " << val.second << endl;
+}

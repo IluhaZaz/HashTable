@@ -207,4 +207,12 @@ public:
 		}
 		return res;
 	}
+
+	vector<pair<Key, Value>> items() {
+		vector<pair<Key, Value>> v;
+		for (const auto& p : _data) {
+			v.push_back(pair<Key, Value>(p.first, p.second));
+		}
+		return v;
+	}
 };
