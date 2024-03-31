@@ -65,3 +65,37 @@ TEST(HashTableTests, ContainsCheck) {
 	EXPECT_FALSE(h.contains(-4));
 	EXPECT_FALSE(h.contains(13));
 }
+
+TEST(HashTableTests, InsertOrAssignCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(2, 2);
+	h.insert(0, 0);
+	h.insert(4, 4);
+	h.insert_or_assign(4, 11);
+	EXPECT_EQ(11, *h.search(4));
+	h.insert_or_assign(-4, 51);
+	EXPECT_EQ(51, *h.search(-4));
+}
+
+TEST(HashTableTests, EraseCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(2, 2);
+	h.insert(0, 0);
+	h.insert(4, 4);
+	h.insert(14, -2);
+	EXPECT_TRUE(h.erase(4));
+	EXPECT_FALSE(h.search(4));
+	EXPECT_FALSE(h.erase(72));
+}
+
+TEST(HashTableTests, CopyConstructorCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(2, 2);
+	h.insert(0, 0);
+	h.insert(4, 4);
+	h.insert(14, -2);
+	UnorderedMap<int, int> h2(h);
+	h2.insert_or_assign(4, 6);
+	EXPECT_EQ(4, *h.search(4));
+	EXPECT_EQ(6, *h2.search(4));
+}

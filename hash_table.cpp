@@ -30,6 +30,10 @@ public:
 	bool is_initialized() const {
 		return _is_initialized;
 	}
+
+	void clear() {
+		_is_initialized = false;
+	}
 };
 
 template<typename Key, typename Value>
@@ -59,6 +63,12 @@ public:
 	void clear() {
 		_data.clear();
 		_used = 0;
+	}
+
+	UnorderedMap(const UnorderedMap& other) {
+		_used = other._used;
+		_coef = other._coef;
+		_data = vector<my_pair<Key, Value>>(other._data);
 	}
 
 	~UnorderedMap() {
@@ -128,5 +138,29 @@ public:
 				return true;
 		}
 		return false;
+	}
+
+	void insert_or_assign(Key key, Value value) {
+		Value* old = this->search(key);
+		if (old) {
+			*old = value;
+		}
+		else {
+			this->insert(key, value);
+		}
+	}
+
+	bool erase(Key key) {
+		if (!this->search(key)) {
+			return false;
+		}
+		size_t ind = this->get_hash(key);
+		int i = 0;
+		while (_data[ind].first != key) {
+			i++;
+			ind = this->get_hash(key, i);
+		}
+		_data[ind].clear();
+		_used--;
 	}
 };
