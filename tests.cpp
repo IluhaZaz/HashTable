@@ -99,3 +99,42 @@ TEST(HashTableTests, CopyConstructorCheck) {
 	EXPECT_EQ(4, *h.search(4));
 	EXPECT_EQ(6, *h2.search(4));
 }
+
+TEST(HashTableTests, SwapCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(0, 0);
+	h.insert(1, 1);
+	h.insert(2, 2);
+
+	UnorderedMap<int, int> h2(13);
+	h2.insert(3, 3);
+	h2.insert(4, 4);
+	h2.insert(5, 5);
+	h2.insert(6, 6);
+
+	UnorderedMap<int, int> h3(h);
+
+	UnorderedMap<int, int>::swap(h, h2);
+	EXPECT_EQ(h3, h2);
+}
+
+TEST(HashTableTests, AssignOperatorCheck) {
+	UnorderedMap<int, int> h(7);
+	h.insert(0, 0);
+	h.insert(1, 1);
+	h.insert(2, 2);
+	h.insert(3, 3);
+
+	UnorderedMap<int, int> h2 = h;
+	EXPECT_EQ(h, h2);
+}
+
+TEST(HashTableTests, CountCheck) {
+	UnorderedMap<int, int> h(27);
+	h.insert(4, 11);
+	h.insert(31, 11);
+	h.insert(58, 11);
+	h.insert(2, 1212);
+
+	EXPECT_EQ(h.count(31), 3);
+}

@@ -163,4 +163,31 @@ public:
 		_data[ind].clear();
 		_used--;
 	}
+
+	static void swap(UnorderedMap& first, UnorderedMap& second) noexcept {
+		
+		std::swap(first._data, second._data);
+		std::swap(first._used, second._used);
+		std::swap(first._coef, second._coef);
+	}
+
+	bool operator==(const UnorderedMap& rhs) const {
+		return _data == rhs._data && _coef == rhs._coef;
+	}
+
+	UnorderedMap& operator=(const UnorderedMap right) {
+		swap(*this, right);
+		return *this;
+	}
+
+	int count(Key key) {
+		size_t hash = this->get_hash(key);
+		size_t res = 0;
+		for (const auto& val : _data) {
+			if (this->get_hash(val.first) == hash) {
+				res++;
+			}
+		}
+		return res;
+	}
 };
