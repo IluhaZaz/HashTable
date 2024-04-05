@@ -40,6 +40,7 @@ TEST(HashTableTests, InsertCheck) {
 	h.insert(2, 2);
 	h.insert(0, 0);
 	h.insert(4, 4);
+	h.insert(4, 4);
 	h.print();
 }
 

@@ -87,8 +87,6 @@ public:
 		for (const auto& val: _data) {
 			if (val.is_initialized())
 				cout << val.first << " " << val.second << endl;
-			else
-				cout << "X" << " " << "X" << endl;
 		}
 	}
 
@@ -128,6 +126,9 @@ public:
 	}
 
 	void insert(Key key, Value value) {
+		if (search(key) != nullptr) {
+			return;
+		}
 		size_t ind = this->get_hash(key);
 		int i = 0;
 		while (_data[ind].is_initialized()) {

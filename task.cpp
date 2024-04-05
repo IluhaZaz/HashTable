@@ -38,6 +38,7 @@ int main() {
 			res += val.second;
 		}
 	}
+	d.print();
 	cout << res;
 
 }
